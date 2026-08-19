@@ -103,7 +103,7 @@ protected:
     using Queue = SPSCQueue<MarketDataMsg, 256>;
 
     Queue        queue_;
-    ITCHParser   parser_{queue_};
+    ITCHParser   parser_(queue_);
 
     // Ingest a framed buffer and return all MarketDataMsgs emitted.
     std::vector<MarketDataMsg> ingest(const std::vector<uint8_t>& buf) {
@@ -203,7 +203,7 @@ TEST_F(ITCHParserTest, AddOrder_Buy_ParsesCorrectly) {
 // ── Test: Add Order ('A') — sell side ─────────────────────────────────────────
 TEST_F(ITCHParserTest, AddOrder_Sell_ParsesCorrectly) {
     const uint64_t order_ref = 2002ULL;
-    auto body = make_add_order_body(order_ref, 'S', 300, "MSFT", 2_000_000u);
+    auto body = make_add_order_body(order_ref, 'S', 300, "MSFT", 2000000u);
     auto msgs = ingest(frame('A', body));
 
     ASSERT_EQ(msgs.size(), 1u);
@@ -220,7 +220,7 @@ TEST_F(ITCHParserTest, OrderDelete_AfterAdd_EmitsCancelOrder) {
     const uint64_t order_ref = 3003ULL;
 
     // 1. Add the order so its ref is known.
-    auto add_body = make_add_order_body(order_ref, 'B', 100, "GOOG", 1_750_000u);
+    auto add_body = make_add_order_body(order_ref, 'B', 100, "GOOG", 1750000u);
     auto add_msgs = ingest(frame('A', add_body));
     ASSERT_EQ(add_msgs.size(), 1u) << "Add should produce one message";
 
@@ -256,11 +256,11 @@ TEST_F(ITCHParserTest, OrderReplace_EmitsModifyOrder) {
     const uint64_t new_ref  = 4005ULL;
 
     // Add the original order.
-    auto add_body = make_add_order_body(orig_ref, 'S', 200, "AMZN", 1_750_000u);
+    auto add_body = make_add_order_body(orig_ref, 'S', 200, "AMZN", 1750000u);
     ingest(frame('A', add_body));
 
     // Replace it.
-    auto rep_body = make_replace_body(orig_ref, new_ref, 150, 1_760_000u);
+    auto rep_body = make_replace_body(orig_ref, new_ref, 150, 1760000u);
     auto msgs     = ingest(frame('U', rep_body));
 
     ASSERT_EQ(msgs.size(), 1u);
@@ -282,8 +282,8 @@ TEST_F(ITCHParserTest, MultipleMsgsInOneDatagram) {
     const uint64_t ref1 = 5001ULL;
     const uint64_t ref2 = 5002ULL;
 
-    auto add1 = frame('A', make_add_order_body(ref1, 'B', 400, "TSLA", 2_500_000u));
-    auto add2 = frame('A', make_add_order_body(ref2, 'S', 600, "NVDA", 8_000_000u));
+    auto add1 = frame('A', make_add_order_body(ref1, 'B', 400, "TSLA", 2500000u));
+    auto add2 = frame('A', make_add_order_body(ref2, 'S', 600, "NVDA", 8000000u));
 
     // Concatenate both frames into one datagram.
     std::vector<uint8_t> datagram;
