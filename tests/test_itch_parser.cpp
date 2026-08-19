@@ -130,7 +130,7 @@ protected:
         uint64_t order_ref, char buy_sell, uint32_t shares,
         const char* ticker, uint32_t itch_price)
     {
-        std::vector<uint8_t> body(34, 0);
+        std::vector<uint8_t> body(35, 0);
         // [0..1] Stock Locate = 1
         w16(body.data() + 0, 1);
         // [2..3] Tracking Number = 0
