@@ -49,6 +49,7 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 set(BUILD_GMOCK OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
+
 # ── Core engine library ───────────────────────────────────────────────────────
 
 add_library(engine_core STATIC
@@ -105,7 +106,9 @@ target_link_libraries(test_microstructure PRIVATE engine_core)
 add_test(NAME Microstructure COMMAND test_microstructure)
 
 add_executable(test_itch_parser tests/test_itch_parser.cpp)
-target_link_libraries(test_itch_parser PRIVATE engine_core)
+target_include_directories(test_itch_parser PRIVATE
+    ${googletest_SOURCE_DIR}/googletest/include)
+target_link_libraries(test_itch_parser PRIVATE engine_core GTest::gtest GTest::gtest_main)
 add_test(NAME ITCHParser COMMAND test_itch_parser)
 
 # ── Simulation demo ───────────────────────────────────────────────────────────
