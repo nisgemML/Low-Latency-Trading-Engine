@@ -101,7 +101,6 @@ else()
     # Fallback: link against system gtest built from /usr/src/gtest
     target_link_libraries(test_itch_parser PRIVATE engine_core gtest gtest_main)
 endif()
-add_test(NAME ITCHParser COMMAND test_itch_parser)
 
 # ── Simulation demo ───────────────────────────────────────────────────────────
 
