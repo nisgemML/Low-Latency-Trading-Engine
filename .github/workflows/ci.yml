@@ -34,7 +34,7 @@ jobs:
         run: cmake --build build --parallel $(nproc)
 
       - name: Test
-        run: ctest --test-dir build --output-on-failure --timeout 120
+        run: ctest --test-dir build --output-on-failure --timeout 60 --timeout 120
 
   asan:
     name: AddressSanitizer
@@ -52,4 +52,4 @@ jobs:
       - name: Build
         run: cmake --build build --parallel $(nproc)
       - name: Test
-        run: ctest --test-dir build --output-on-failure --timeout 120
+        run: ctest --test-dir build --output-on-failure --timeout 60 --timeout 120
