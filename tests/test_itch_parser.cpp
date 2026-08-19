@@ -101,7 +101,7 @@ static std::vector<uint8_t> frame(uint8_t msg_type, const std::vector<uint8_t>& 
 
 class ITCHParserTest : public ::testing::Test {
 protected:
-    using Queue = SPSCQueue<MarketDataMsg, 256>;
+    using Queue = SPSCQueue<MarketDataMsg, 65536>;
 
     Queue                     queue_;
     std::unique_ptr<ITCHParser> parser_;
