@@ -37,7 +37,17 @@ endif()
 # ── Dependencies ──────────────────────────────────────────────────────────────
 
 find_package(Threads REQUIRED)
-find_package(GTest QUIET)
+
+# ── GoogleTest via FetchContent ───────────────────────────────────────────────
+include(FetchContent)
+FetchContent_Declare(
+    googletest
+    URL https://github.com/google/googletest/archive/refs/tags/v1.14.0.zip
+    DOWNLOAD_EXTRACT_TIMESTAMP true
+)
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+set(BUILD_GMOCK OFF CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
 
 # ── Core engine library ───────────────────────────────────────────────────────
 
@@ -95,12 +105,8 @@ target_link_libraries(test_microstructure PRIVATE engine_core)
 add_test(NAME Microstructure COMMAND test_microstructure)
 
 add_executable(test_itch_parser tests/test_itch_parser.cpp)
-if(GTest_FOUND)
-    target_link_libraries(test_itch_parser PRIVATE engine_core GTest::GTest GTest::Main)
-else()
-    # Fallback: link against system gtest built from /usr/src/gtest
-    target_link_libraries(test_itch_parser PRIVATE engine_core gtest gtest_main)
-endif()
+target_link_libraries(test_itch_parser PRIVATE engine_core)
+add_test(NAME ITCHParser COMMAND test_itch_parser)
 
 # ── Simulation demo ───────────────────────────────────────────────────────────
 
