@@ -1,11 +1,9 @@
 name: CI
-
 on:
   push:
-    branches: [ main, dev ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
-
 jobs:
   build-and-test:
     name: Build & Test (${{ matrix.build_type }})
@@ -14,27 +12,21 @@ jobs:
       fail-fast: false
       matrix:
         build_type: [Release, RelWithDebInfo]
-        compiler: [g++-12]
-
     steps:
       - uses: actions/checkout@v4
-
       - name: Install dependencies
         run: |
           sudo apt-get update -q
-          sudo apt-get install -y cmake ninja-build ${{ matrix.compiler }} libgtest-dev
-
+          sudo apt-get install -y cmake ninja-build g++-12 libgtest-dev
+          cd /usr/src/gtest && sudo cmake . && sudo make && sudo cp lib/*.a /usr/lib/
       - name: Configure
         run: |
-          CXX=${{ matrix.compiler }} cmake -S . -B build \
-            -G Ninja \
+          CXX=g++-12 cmake -S . -B build -G Ninja \
             -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-
       - name: Build
         run: cmake --build build --parallel $(nproc)
-
       - name: Test
-        run: ctest --test-dir build --output-on-failure --timeout 60 --timeout 120
+        run: ctest --test-dir build --output-on-failure --timeout 60
 
   asan:
     name: AddressSanitizer
@@ -42,14 +34,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install dependencies
-        run: sudo apt-get update -q && sudo apt-get install -y cmake ninja-build g++-12 libgtest-dev
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y cmake ninja-build g++-12 libgtest-dev
+          cd /usr/src/gtest && sudo cmake . && sudo make && sudo cp lib/*.a /usr/lib/
       - name: Configure
         run: |
-          CXX=g++-12 cmake -S . -B build \
-            -G Ninja \
-            -DCMAKE_BUILD_TYPE=Debug \
+          CXX=g++-12 cmake -S . -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=RelWithDebInfo \
             -DCMAKE_CXX_FLAGS="-fsanitize=address,undefined"
-      - name: Build
-        run: cmake --build build --parallel $(nproc)
-      - name: Test
-        run: ctest --test-dir build --output-on-failure --timeout 60 --timeout 120
+      - name: Build & Test
+        run: cmake --build build --parallel $(nproc) && ctest --test-dir build --output-on-failure --timeout 60
