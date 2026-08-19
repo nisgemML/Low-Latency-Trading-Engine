@@ -1,0 +1,17 @@
+build/
+*.o
+*.a
+*.out
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+CTestTestfile.cmake
+Makefile
+.ninja_deps
+.ninja_log
+bench_mpsc
+bench_batch
+bench_t2t
+test_correctness
+test_tsan
+test_batch
