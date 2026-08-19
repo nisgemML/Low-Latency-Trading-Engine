@@ -310,10 +310,10 @@ TEST_F(ITCHParserTest, MultipleMsgsInOneDatagram) {
 
 // ── Test: Truncated message is silently dropped (robustness) ──────────────────
 //
-// The 'A' body is 34 bytes; sending only 10 bytes should produce no output.
+// The 'A' body is 35 bytes; sending only 10 bytes should produce no output.
 TEST_F(ITCHParserTest, TruncatedMessage_IsDropped) {
     std::vector<uint8_t> short_body(10, 0);
-    short_body[18] = 'B';  // set buy/sell so it looks plausible
+
     auto msgs = ingest(frame('A', short_body));
     EXPECT_EQ(msgs.size(), 0u) << "Truncated 'A' body should produce no message";
 }
