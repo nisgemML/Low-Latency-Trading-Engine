@@ -49,6 +49,7 @@
 #include "core/spsc_queue.hpp"
 #include "core/types.hpp"
 #include <gtest/gtest.h>
+#include <memory>
 #include <cstdint>
 #include <vector>
 #include <cstring>
@@ -100,14 +101,18 @@ static std::vector<uint8_t> frame(uint8_t msg_type, const std::vector<uint8_t>& 
 
 class ITCHParserTest : public ::testing::Test {
 protected:
-    using Queue = SPSCQueue<MarketDataMsg, 256>;
+    using Queue = SPSCQueue<MarketDataMsg, 65536>;
 
-    Queue        queue_;
-    ITCHParser   parser_(queue_);
+    Queue                       queue_;
+    std::unique_ptr<ITCHParser> parser_;
+
+    void SetUp() override {
+        parser_ = std::make_unique<ITCHParser>(queue_);
+    }
 
     // Ingest a framed buffer and return all MarketDataMsgs emitted.
     std::vector<MarketDataMsg> ingest(const std::vector<uint8_t>& buf) {
-        const int n = parser_.ingest(std::span<const uint8_t>(buf));
+        const int n = parser_->ingest(std::span<const uint8_t>(buf));
         (void)n;
         std::vector<MarketDataMsg> out;
         MarketDataMsg msg;
