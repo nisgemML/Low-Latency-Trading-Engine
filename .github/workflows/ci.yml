@@ -22,7 +22,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update -q
-          sudo apt-get install -y cmake ninja-build ${{ matrix.compiler }}
+          sudo apt-get install -y cmake ninja-build ${{ matrix.compiler }} libgtest-dev
 
       - name: Configure
         run: |
@@ -42,7 +42,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install dependencies
-        run: sudo apt-get update -q && sudo apt-get install -y cmake ninja-build g++-12
+        run: sudo apt-get update -q && sudo apt-get install -y cmake ninja-build g++-12 libgtest-dev
       - name: Configure
         run: |
           CXX=g++-12 cmake -S . -B build \
