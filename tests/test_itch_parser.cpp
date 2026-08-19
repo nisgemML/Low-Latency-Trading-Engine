@@ -154,7 +154,7 @@ protected:
 
     // Build a valid 'D' (Order Delete) body.
     static std::vector<uint8_t> make_delete_body(uint64_t order_ref) {
-        std::vector<uint8_t> body(17, 0);
+        std::vector<uint8_t> body(18, 0);
         w16(body.data() + 0, 1);   // Stock Locate
         w16(body.data() + 2, 0);   // Tracking Number
         w48(body.data() + 4, 0x12345679ULL);  // Timestamp
@@ -166,7 +166,7 @@ protected:
     static std::vector<uint8_t> make_replace_body(
         uint64_t orig_ref, uint64_t new_ref, uint32_t shares, uint32_t itch_price)
     {
-        std::vector<uint8_t> body(33, 0);
+        std::vector<uint8_t> body(34, 0);
         w16(body.data() + 0, 1);   // Stock Locate
         w16(body.data() + 2, 0);   // Tracking Number
         w48(body.data() + 4, 0x1234567AULL);  // Timestamp
@@ -200,8 +200,8 @@ TEST_F(ITCHParserTest, AddOrder_Buy_ParsesCorrectly) {
     EXPECT_EQ(m.qty,      500u);
 
     // Price: ITCH 1_500_000 (10^-4 $) → internal 150_000_000 (10^-6 $)
-    EXPECT_EQ(m.price, Price(149990400))
-        << "Price mismatch: expected 149990400 got " << m.price;
+    EXPECT_EQ(m.price, Price(150000000))
+        << "Price mismatch: expected 150000000 got " << m.price;
 }
 
 // ── Test: Add Order ('A') — sell side ─────────────────────────────────────────
@@ -213,7 +213,7 @@ TEST_F(ITCHParserTest, AddOrder_Sell_ParsesCorrectly) {
     ASSERT_EQ(msgs.size(), 1u);
     EXPECT_EQ(msgs[0].side, Side::Sell);
     EXPECT_EQ(msgs[0].qty,  300u);
-    EXPECT_EQ(msgs[0].price, Price(199987200));
+    EXPECT_EQ(msgs[0].price, Price(200000000));
 }
 
 // ── Test: Order Delete ('D') after Add ────────────────────────────────────────
@@ -272,7 +272,7 @@ TEST_F(ITCHParserTest, OrderReplace_EmitsModifyOrder) {
 
     EXPECT_EQ(r.msg_type, MarketDataMsg::Type::ModifyOrder);
     EXPECT_EQ(r.qty,      150u);
-    EXPECT_EQ(r.price,    Price(176011400));
+    EXPECT_EQ(r.price,    Price(176000000));
     // Side is inherited from the original order's ref-table entry.
     EXPECT_EQ(r.side,     Side::Sell);
 }
@@ -300,12 +300,12 @@ TEST_F(ITCHParserTest, MultipleMsgsInOneDatagram) {
     EXPECT_EQ(msgs[0].msg_type, MarketDataMsg::Type::NewOrder);
     EXPECT_EQ(msgs[0].side,     Side::Buy);
     EXPECT_EQ(msgs[0].qty,      400u);
-    EXPECT_EQ(msgs[0].price,    Price(249984000));
+    EXPECT_EQ(msgs[0].price,    Price(250000000));
 
     EXPECT_EQ(msgs[1].msg_type, MarketDataMsg::Type::NewOrder);
     EXPECT_EQ(msgs[1].side,     Side::Sell);
     EXPECT_EQ(msgs[1].qty,      600u);
-    EXPECT_EQ(msgs[1].price,    Price(800010500));
+    EXPECT_EQ(msgs[1].price,    Price(800000000));
 }
 
 // ── Test: Truncated message is silently dropped (robustness) ──────────────────

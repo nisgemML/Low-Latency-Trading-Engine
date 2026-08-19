@@ -28,7 +28,7 @@ static const uint16_t* build_msg_len_table() {
     t['E'] = 30;   // Order Executed
     t['C'] = 35;   // Order Executed with Price
     t['X'] = 22;   // Order Cancel (partial)
-    t['D'] = 18;   // Order Delete
+    t['D'] = 18;   // Order Delete: correct   // Order Delete
     t['U'] = 34;   // Order Replace
     t['P'] = 43;   // Trade (non-cross)
     t['Q'] = 39;   // Cross Trade
